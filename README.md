@@ -1,5 +1,6 @@
 # Projeto-Livr-ar
 O presente README detalha o projeto Livr-ar, projeto da disciplina Projeto Interdisciplinar.
+Data de criação: 06/08/2025
 
 ## Membros
 Patrick Domênico dos Santos Pereira Alves
@@ -12,6 +13,10 @@ Dado a tematização do projeto, ele será produzido com os Objetivos de Desenvo
 
 ## Escopo do Produto
 O escopo do MVP se dá em criar um sistema onde usuários possam cadastrar seus livros em um banco de dados, escolher um livro através dele e que, ao selecionarem um livro desejado, sejam fornecidos o e-mail de contato do doador.
+Os critérios para avaliar o produto serão:
+- Um frontend (UI) operável e intuitivo.
+- Um banco de dados operacional capaz de armazenar úsuarios e livros.
+- Um backend autonomo que se comunica com o banco de dados.
 
 ## Descrição Técnica
 O aplicativo será feito na web utilizando ferramentas de programação como Visual Studio Code.
