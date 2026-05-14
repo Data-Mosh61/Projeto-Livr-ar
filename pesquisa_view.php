@@ -69,8 +69,8 @@
             </tr>
         </thead>
         <tbody>
-            <?php if (count($livros) > 0): ?>
-                <?php foreach ($livros as $livro): ?>
+            <?php if (count($livros) > 0): ?> // Se a conta de livros for maior que zero...
+                <?php foreach ($livros as $livro): ?> //...para cada livro encontrado...
                     <tr>
                         <td><?php echo htmlspecialchars($livro['titulo']); ?></td>
                         <td><?php echo htmlspecialchars($livro['genero']); ?></td>
@@ -79,11 +79,11 @@
                         <td><strong><?php echo htmlspecialchars($livro['estado']); ?></strong></td>
                         <td><?php echo date('d/m/Y', strtotime($livro['cadastrado_em'])); ?></td>
                     </tr>
-                <?php endforeach; ?>
+                <?php endforeach; ?> //...exibe os detalhes do livro em uma linha da tabela.
             <?php else: ?>
                 <tr>
                     <td colspan="6" class="no-results">Nenhum livro encontrado com esses filtros.</td>
-                </tr>
+                </tr> // Se não houver livros encontrados, exibe uma mensagem informando que nenhum livro corresponde aos filtros aplicados.
             <?php endif; ?>
         </tbody>
     </table>
