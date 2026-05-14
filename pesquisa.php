@@ -3,10 +3,10 @@ session_start();
 
 // 1. Verifica se o usuário está logado para obter o id_usuario e associar o livro a ele
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_id'] === NULL) {
-    header ("Location: login_view.php"); // Se o usuario não estiver logado, redireciona para a página de login
+    header ("Location: login_view.php"); // 2. Se o usuario não estiver logado, redireciona para a página de login
 }
 
-// Configurações do Banco de Dados
+// 3. Configurações do Banco de Dados
 $host = 'localhost';
 $nome_bd = 'livr_ar';
 $usuario_bd = 'root';
@@ -22,8 +22,7 @@ try {
     die("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
 }
 
-// Inicializa a consulta base com JOIN
-// Buscamos colunas do livro (l) e o estado do usuário (u)
+// 4. Inicializa a consulta base com JOIN. Buscamos colunas do livro (l) e o estado do usuário (u)
 $sql = "SELECT l.*, u.estado 
         FROM livros l 
         JOIN usuarios u ON l.id_usuario = u.id 
@@ -31,7 +30,7 @@ $sql = "SELECT l.*, u.estado
 
 $parametros = [];
 
-// Aplicando Filtros se existirem na URL (via GET)
+// 5. Aplicando Filtros se existirem na URL (via GET)
 if (!empty($_GET['titulo'])) {
     $sql .= " AND l.titulo LIKE :titulo";
     $parametros[':titulo'] = '%' . $_GET['titulo'] . '%';
