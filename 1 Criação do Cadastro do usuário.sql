@@ -6,7 +6,7 @@ CREATE TABLE usuarios (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
     senha VARCHAR(15) NOT NULL,
-    estado VARCHAR(30) NOT NULL,
+    estado VARCHAR(2) NOT NULL,
     telefone VARCHAR(30) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
