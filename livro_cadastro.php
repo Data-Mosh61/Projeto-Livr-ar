@@ -1,12 +1,13 @@
 <?php
 session_start();
 
-// 1. Verifica se o usuário está logado para obter o id_usuario e associar o livro a ele
+// 1. Verifica login
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_id'] === NULL) {
-    header ("Location: login_view.php"); // Se o usuario não estiver logado, redireciona para a página de login
+    header("Location: login_view.php");
+    exit;
 }
 
-// 2. Configurações de conexão com o banco de dados
+// 2. Configurações de conexão
 $host = 'localhost';
 $nome_bd = 'livr_ar';
 $usuario_bd = 'root';
@@ -18,42 +19,85 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$nome_bd;charset=utf8", $usuario_bd, $senha_bd);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
-    error_log("Erro de conexão com o banco de dados: " . $e->getMessage());
-    die("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
+    error_log("Erro de conexão: " . $e->getMessage());
+    die("Erro ao conectar ao banco de dados.");
 }
 
-// 3. Verificando se o formulário foi enviado
+// 3. Processamento do formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_usuario = $_SESSION['usuario_id'];
     $titulo = trim($_POST['titulo']);
-
-    // 4. Converte vírgula em ponto para o banco de dados aceitar o formato decimal
     $preco = str_replace(',', '.', $_POST['preco']); 
-    $genero = $_POST['genero'];
+    $categoria = $_POST['categoria'];
     $condicao = $_POST['condicao'];
+    
+    // 4. Descobre qual gênero foi preenchido com base na categoria
+    $genero_final = null;
+    if ($categoria === 'Gibi' || $categoria === 'Livro') {
+        $genero_final = !empty($_POST['genero1']) ? $_POST['genero1'] : null;
+    } elseif ($categoria === 'Didático') {
+        $genero_final = !empty($_POST['genero2']) ? $_POST['genero2'] : null;
+    } elseif ($categoria === 'Revista') {
+        $genero_final = !empty($_POST['genero3']) ? $_POST['genero3'] : null;
+    } // 5. Se o usuário não selecionou um gênero correspondente, $genero_final ficará null
 
-    if (!empty($titulo) && !empty($genero) && !empty($condicao)) { 
+    // 6. Validações básicas
+    if (empty($titulo) || empty($categoria) || empty($condicao)) {
+        $mensagem = "Preencha todos os campos obrigatórios (Título, Categoria e Condição).";
+    } elseif (empty($genero_final)) {
+        $mensagem = "Por favor, selecione um gênero correspondente à categoria escolhida."; // 7. Mensagem específica para gênero
+    } else {
         
-        //5. Se os campos obrigatórios estiverem preenchidos, tenta inserir o livro no banco de dados
         try {
-            $sql = "INSERT INTO livros (id_usuario, titulo, preco, genero, condicao) 
-                    VALUES (:id_usuario, :titulo, :preco, :genero, :condicao)";
+            $pdo->beginTransaction(); // 8. Inicia uma transação para garantir que tudo salve junto
+
+            // 9. Verifica se o gênero já existe na tabela 'generos'
+            $sql_busca_genero = "SELECT id_genero
+                                FROM generos 
+                                WHERE categoria = :categoria AND genero = :genero";
+            $stmt_busca = $pdo->prepare($sql_busca_genero);
+            $stmt_busca->bindParam(':categoria', $categoria);
+            $stmt_busca->bindParam(':genero', $genero_final);
+            $stmt_busca->execute();
             
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':id_usuario', $id_usuario);
-            $stmt->bindParam(':titulo', $titulo);
-            $stmt->bindParam(':preco', $preco);
-            $stmt->bindParam(':genero', $genero);
-            $stmt->bindParam(':condicao', $condicao);
-            
-            if ($stmt->execute()) {
-                $mensagem = "Livro cadastrado com sucesso!";
+            $id_genero = null;
+
+            if ($stmt_busca->rowCount() > 0) {
+                // 10. Se o gênero já existe, seleciona o ID para usar como foreign key
+                $row = $stmt_busca->fetch(PDO::FETCH_ASSOC);
+                $id_genero = $row['id_genero'];
+            } else {
+                // 11. Se não existe, cria um novo e pega o ID recém-criado
+                $sql_insere_genero = "INSERT INTO generos (categoria, genero)
+                                      VALUES (:categoria, :genero)";
+                $stmt_insere = $pdo->prepare($sql_insere_genero);
+                $stmt_insere->bindParam(':categoria', $categoria);
+                $stmt_insere->bindParam(':genero', $genero_final);
+                $stmt_insere->execute();
+                
+                $id_genero = $pdo->lastInsertId();
             }
+
+            // 12. Agora salva o livro referenciando a foreign key ($id_genero)
+            $sql_livro = "INSERT INTO livros (id_usuario, titulo, preco, condicao, id_genero) 
+                          VALUES (:id_usuario, :titulo, :preco, :condicao, :id_genero)";
+            
+            $stmt_livro = $pdo->prepare($sql_livro);
+            $stmt_livro->bindParam(':id_usuario', $id_usuario);
+            $stmt_livro->bindParam(':titulo', $titulo);
+            $stmt_livro->bindParam(':preco', $preco);
+            $stmt_livro->bindParam(':condicao', $condicao);
+            $stmt_livro->bindParam(':id_genero', $id_genero); // 13. Adicionando a Foreign Key
+            
+            $stmt_livro->execute();
+
+            $pdo->commit(); // Confirma a transação
+            $mensagem = "Livro cadastrado com sucesso!";
+
         } catch(PDOException $e) {
+            $pdo->rollBack(); // Desfaz tudo se der erro no meio do caminho
             $mensagem = "Erro ao cadastrar: " . $e->getMessage();
         }
-    } else {
-        $mensagem = "Preencha todos os campos obrigatórios.";
     }
 }
 ?>
