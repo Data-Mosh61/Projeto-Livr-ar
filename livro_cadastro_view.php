@@ -14,35 +14,69 @@
 <div class="container">
     <h2>Cadastrar Novo Livro</h2>
     
-    <?php if ($mensagem): ?>
+    <?php if (!empty($mensagem)): ?>
         <div class="msg"><?php echo $mensagem; ?></div>
     <?php endif; ?>
 
     <form method="POST">
         <div class="form-group">
             <label>Título do Livro:</label>
-            <input type="text" name="titulo" required>
+            <input type="text" name="titulo" required value="<?php echo htmlspecialchars($titulo ?? ''); ?>">
         </div>
 
         <div class="form-group">
             <label>Preço (R$):</label>
-            <input type="text" name="preco" placeholder="0.00">
+            <input type="text" name="preco" placeholder="0.00" value="<?php echo htmlspecialchars($preco ?? ''); ?>">
         </div>
 
         <div class="form-group">
-            <label>Gênero:</label>
-            <select name="genero" required>
+            <label>Categoria:</label>
+            <select name="categoria" required>
+                <option value="">Selecione...</option>
+                <option value="Gibi">Gibi</option>
+                <option value="Livro">Livro</option>
+                <option value="Didático">Didático</option>
+                <option value="Revista">Revista</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Gênero (Gibi/Livro):</label>
+            <select name="genero1">
                 <option value="">Selecione...</option>
                 <option value="Mistério">Mistério</option>
-                <option value="Ficção Cientifica">Ficção Científica</option>
+                <option value="Ficção Científica">Ficção Científica</option>
                 <option value="Ação">Ação</option>
                 <option value="Medieval">Medieval</option>
             </select>
         </div>
 
         <div class="form-group">
+            <label>Gênero (Didático):</label>
+            <select name="genero2">
+                <option value="">Selecione...</option>
+                <option value="Matemática">Matemática</option>
+                <option value="Física">Física</option>
+                <option value="Ciências">Ciências</option>
+                <option value="Geografia">Geografia</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Gênero (Revista):</label>
+            <select name="genero3">
+                <option value="">Selecione...</option>
+                <option value="Lazer">Lazer</option>
+                <option value="Esportes">Esportes</option>
+                <option value="Moda">Moda</option>
+                <option value="Geral">Geral</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label>Condição:</label>
             <select name="condicao" required>
+                <option value="">Selecione...</option>
                 <option value="Novo">Novo</option>
                 <option value="Seminovo">Seminovo</option>
                 <option value="Bom estado">Bom estado</option>
