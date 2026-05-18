@@ -31,16 +31,16 @@
 
         <div class="form-group">
             <label>Categoria:</label>
-            <select name="categoria" required>
+            <select name="categoria" required onchange="toggleCategoria()">
                 <option value="">Selecione...</option>
-                <option value="Gibi">Gibi</option>
-                <option value="Livro">Livro</option>
-                <option value="Didático">Didático</option>
-                <option value="Revista">Revista</option>
+                <option value="Gibi" id="gibi">Gibi</option>
+                <option value="Livro" id="livro">Livro</option>
+                <option value="Didático" id="didatico">Didático</option>
+                <option value="Revista" id="revista">Revista</option>
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_gibi_livro" style="display: none; margin-top: 10px;">
             <label>Gênero (Gibi/Livro):</label>
             <select name="genero1">
                 <option value="">Selecione...</option>
@@ -51,7 +51,7 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_didatico" style="display: none; margin-top: 10px;">
             <label>Gênero (Didático):</label>
             <select name="genero2">
                 <option value="">Selecione...</option>
@@ -62,7 +62,7 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="div_revista" style="display: none; margin-top: 10px;">
             <label>Gênero (Revista):</label>
             <select name="genero3">
                 <option value="">Selecione...</option>
@@ -84,7 +84,7 @@
                 <option value="Danificado">Danificado</option>
             </select>
         </div>
-
+        <script src="livro_cadastro.js"></script>
         <button type="submit">Salvar Livro</button>
     </form>
     <br>
