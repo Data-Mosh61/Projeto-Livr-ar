@@ -1,4 +1,5 @@
 <?php
+    include 'conexao_bd.php';
     include 'usuario_cadastro.php';
 ?>
 
@@ -12,9 +13,9 @@
 </head>
 
 <body>
-    
-    <?php if (isset($mensagem)) echo $mensagem; ?>
-    <h2>Criar Nova Conta</h2>
+    <div class="container">
+        <?php if (isset($mensagem)) echo $mensagem; ?>
+        <h2>Criar Nova Conta</h2>
 
     <form method="POST" action="">
         <div class="form-group">
@@ -63,5 +64,6 @@
         <button type="submit">Cadastrar</button>
     </form>
 <a href="login_view.php">Já está cadastrado? Clique aqui</a>
+</div>
 </body>
 </html>
