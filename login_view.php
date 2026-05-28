@@ -1,4 +1,5 @@
-<?php 
+<?php
+    include 'conexao_bd.php';
     include 'login.php'; 
 ?>
 
@@ -12,15 +13,13 @@
 </head>
 
 <body>
-    <div class="login-container">
+    <div class="container">
         <h2>Entrar</h2>
         
-        <!-- Displays the error message from login.php if it exists -->
         <?php if (!empty($mensagem)): ?>
             <div class="erro"><?php echo htmlspecialchars($mensagem); ?></div>
         <?php endif; ?>
         
-        <!-- Fixed: Removed extra quotes in method, removed action so it posts to itself -->
         <form method="POST" action="">
             <div class="form-group">
                 <label for="email">E-mail:</label>
@@ -34,7 +33,7 @@
         </form>
         
         <p></p>
-        <a href="cadastro.html">Ainda não tem uma conta? Clique aqui</a>
+        <a href="usuario_cadastro_view.php">Ainda não tem uma conta? Clique aqui</a>
     </div>
 
 </body>
