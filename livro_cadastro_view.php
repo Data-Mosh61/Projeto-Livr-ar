@@ -1,4 +1,5 @@
 <?php
+    include 'conexao_bd.php';
     include 'livro_cadastro.php';
 ?>
 
@@ -88,7 +89,7 @@
         <button type="submit">Salvar Livro</button>
     </form>
     <br>
-    <a href="homepage.html">Voltar para página principal</a>
+    <a href="homepage_view.php">Voltar para página principal</a>
 </div>
 
 </body>
