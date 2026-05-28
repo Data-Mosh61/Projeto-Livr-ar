@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // 1. Verifica login
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_id'] === NULL) {
@@ -7,23 +6,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_id'] === NULL) {
     exit;
 }
 
-// 2. Configurações de conexão
-$host = 'localhost';
-$nome_bd = 'livr_ar';
-$usuario_bd = 'root';
-$senha_bd = '';
-
-$mensagem = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$nome_bd;charset=utf8", $usuario_bd, $senha_bd);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    error_log("Erro de conexão: " . $e->getMessage());
-    die("Erro ao conectar ao banco de dados.");
-}
-
-// 3. Processamento do formulário
+// 2. Processamento do formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_usuario = $_SESSION['usuario_id'];
     $titulo = trim($_POST['titulo']);
@@ -31,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $categoria = $_POST['categoria'];
     $condicao = $_POST['condicao'];
     
-    // 4. Descobre qual gênero foi preenchido com base na categoria
+    // 3. Descobre qual gênero foi preenchido com base na categoria
     $genero_final = null;
     if ($categoria === 'Gibi' || $categoria === 'Livro') {
         $genero_final = !empty($_POST['genero1']) ? $_POST['genero1'] : null;
@@ -39,19 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $genero_final = !empty($_POST['genero2']) ? $_POST['genero2'] : null;
     } elseif ($categoria === 'Revista') {
         $genero_final = !empty($_POST['genero3']) ? $_POST['genero3'] : null;
-    } // 5. Se o usuário não selecionou um gênero correspondente, $genero_final ficará null
+    } // 4. Se o usuário não selecionou um gênero correspondente, $genero_final ficará null
 
-    // 6. Validações básicas
+    // 5. Validações básicas
     if (empty($titulo) || empty($categoria) || empty($condicao)) {
         $mensagem = "Preencha todos os campos obrigatórios (Título, Categoria e Condição).";
     } elseif (empty($genero_final)) {
-        $mensagem = "Por favor, selecione um gênero correspondente à categoria escolhida."; // 7. Mensagem específica para gênero
+        $mensagem = "Por favor, selecione um gênero correspondente à categoria escolhida."; // 6. Mensagem específica para gênero
     } else {
         
         try {
-            $pdo->beginTransaction(); // 8. Inicia uma transação para garantir que tudo salve junto
+            $pdo->beginTransaction(); // 7. Inicia uma transação para garantir que tudo salve junto
 
-            // 9. Verifica se o gênero já existe na tabela 'generos'
+            // 8. Verifica se o gênero já existe na tabela 'generos'
             $sql_busca_genero = "SELECT id_genero
                                 FROM generos 
                                 WHERE categoria = :categoria AND genero = :genero";
@@ -63,11 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_genero = null;
 
             if ($stmt_busca->rowCount() > 0) {
-                // 10. Se o gênero já existe, seleciona o ID para usar como foreign key
+                // 9. Se o gênero já existe, seleciona o ID para usar como foreign key
                 $row = $stmt_busca->fetch(PDO::FETCH_ASSOC);
                 $id_genero = $row['id_genero'];
             } else {
-                // 11. Se não existe, cria um novo e pega o ID recém-criado
+                // 10. Se não existe, cria um novo e pega o ID recém-criado
                 $sql_insere_genero = "INSERT INTO generos (categoria, genero)
                                       VALUES (:categoria, :genero)";
                 $stmt_insere = $pdo->prepare($sql_insere_genero);
@@ -78,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id_genero = $pdo->lastInsertId();
             }
 
-            // 12. Agora salva o livro referenciando a foreign key ($id_genero)
+            // 11. Agora salva o livro referenciando a foreign key ($id_genero)
             $sql_livro = "INSERT INTO livros (id_usuario, titulo, preco, condicao, id_genero) 
                           VALUES (:id_usuario, :titulo, :preco, :condicao, :id_genero)";
             
@@ -87,15 +70,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_livro->bindParam(':titulo', $titulo);
             $stmt_livro->bindParam(':preco', $preco);
             $stmt_livro->bindParam(':condicao', $condicao);
-            $stmt_livro->bindParam(':id_genero', $id_genero); // 13. Adicionando a Foreign Key
+            $stmt_livro->bindParam(':id_genero', $id_genero); // 12. Adicionando a Foreign Key
             
             $stmt_livro->execute();
 
-            $pdo->commit(); // Confirma a transação
+            $pdo->commit(); // 13. Confirma a transação
             $mensagem = "Livro cadastrado com sucesso!";
 
         } catch(PDOException $e) {
-            $pdo->rollBack(); // Desfaz tudo se der erro no meio do caminho
+            $pdo->rollBack(); // 14. Desfaz tudo se der erro no meio do caminho
             $mensagem = "Erro ao cadastrar: " . $e->getMessage();
         }
     }
