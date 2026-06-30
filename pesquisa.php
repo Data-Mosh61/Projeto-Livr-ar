@@ -1,13 +1,19 @@
 <?php
 
+if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_id'] === NULL) {
+    header("Location: login_view.php");
+    exit;
+}
+
+$parametros = [];
+$parametros[':usuario_id'] = $_SESSION['usuario_id'];
+
 // 1. Inicializa a consulta base com JOIN. Buscamos colunas do livro (l), o estado do usuário (u) e o gênero (g)
 $sql = "SELECT l.*, u.estado, g.categoria, g.genero AS genero
         FROM livros l 
         LEFT JOIN usuarios u ON l.id_usuario = u.id 
         LEFT JOIN generos g ON l.id_genero = g.id_genero 
-        WHERE 1=1";
-
-$parametros = [];
+        WHERE 1=1 AND l.disponibilidade = 0 AND l.id_usuario != :usuario_id"; // 1=1 é uma técnica para facilitar a adição de condições com AND
 
 // 2. Aplicando Filtros se existirem na URL (via GET)
 if (!empty($_GET['titulo'])) {

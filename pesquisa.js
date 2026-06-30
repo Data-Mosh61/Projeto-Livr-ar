@@ -27,3 +27,31 @@ function toggleCategoria() {
 }
 
 toggleCategoria(); // Chama a função ao carregar a página para ajustar os campos conforme a categoria selecionada (ou não)
+
+function cookieChat(idProprietario, idLivro, tituloLivro) {
+    if (confirm("Deseja entrar em contato com o proprietário do livro?")) {
+        
+        let formData = new FormData();
+        formData.append('id_livro', idLivro); // Passa o ID do livro para identificar qual livro está sendo solicitado
+
+        // Atualiza a disponibilidade do livro no banco de dados
+        fetch('disponibilidade.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Armazena os dados necessários em cookies para que o chat_view.php possa ler e agir de acordo
+                document.cookie = "id_proprietario=" + idProprietario + "; path=/";
+                document.cookie = "titulo_livro=" + encodeURIComponent(tituloLivro) + "; path=/";
+                
+                // Redireciona para o chat_view.php
+                window.location.href = "chat_view.php";
+            } else {
+                alert("Erro ao atualizar a disponibilidade do livro no sistema.");
+            }
+        })
+        .catch(err => console.error("Erro na requisição: ", err));
+    }
+}

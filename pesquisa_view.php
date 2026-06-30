@@ -8,9 +8,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Catálogo de Livros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body { padding: 0px; margin: 0px;}
+    </style>
 </head>
 <body>
+    <?php include 'header.php'; ?>
+    <?php if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] !== NULL) {
+        include 'pendencias.php';
+    }?>
     <h2>Catálogo de Livros Disponíveis</h2>
     <h2><?php if (!empty($mensagem)): ?>
             <div class="erro"><?php echo htmlspecialchars($mensagem); ?></div>
@@ -86,7 +94,6 @@
                     <option value="SP" <?php echo ($_GET['estado'] ?? '') == 'SP' ? 'selected' : ''; ?>>São Paulo</option>
                 </select>
             </div>
-            <script src="pesquisa.js"></script>
             <button type="submit" class="btn-search">Filtrar</button>
             <a href="pesquisa_view.php" style="text-decoration:none; color:#666; font-size:12px; align-self:center;">Limpar Filtros</a>
         </form>
@@ -102,10 +109,11 @@
                 <th>Condição</th>
                 <th>Localização (UF)</th>
                 <th>Data</th>
+                <th>Ação</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (count($livros) > 0): ?> <!-- Se a conta de livros for maior que zero...! -->
+            <?php if (count($livros) > 0): ?> <!-- Se a conta de livros for maior que zero... !-->
                 <?php foreach ($livros as $livro): ?> <!--...para cada livro encontrado...-->
                     <tr>
                         <td><?php echo htmlspecialchars($livro['titulo']); ?></td>
@@ -115,8 +123,12 @@
                         <td><?php echo htmlspecialchars($livro['condicao']); ?></td>
                         <td><strong><?php echo htmlspecialchars($livro['estado']); ?></strong></td>
                         <td><?php echo date('d/m/Y', strtotime($livro['cadastrado_em'])); ?></td>
+                        <td>
+                            <button onclick="cookieChat('<?php echo $livro['id_usuario']; ?>', '<?php echo $livro['id_livro']; ?>', '<?php echo htmlspecialchars($livro['titulo'], ENT_QUOTES); ?>')">Eu quero!</button>
+                        </td>
+                        <script src="pesquisa.js"></script>
                     </tr>
-                <?php endforeach; ?> <!--...exibe os detalhes do livro em uma linha da tabela.-->
+                <?php endforeach; ?> <!--...exibe os detalhes do livro em uma linha da tabela.!-->
             <?php else: ?>
                 <tr>
                     <td colspan="6" class="no-results">Nenhum livro encontrado com esses filtros.</td>
@@ -125,6 +137,6 @@
         </tbody>
     </table>
     <a href="homepage_view.php">Voltar para página principal</a>
-
+<?php include 'footer.php'; ?>
 </body>
 </html>

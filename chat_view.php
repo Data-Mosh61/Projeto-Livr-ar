@@ -7,6 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
         body { display: flex; font-family: Arial; height: 100vh; margin: 0; }
         #sidebar { width: 30%; border-right: 1px solid #ccc; padding: 10px; }
@@ -19,7 +21,6 @@
     </style>
 </head>
 <body>
-
     <div id="sidebar">
         <h3>Encontre usuários por ID</h3>
         <input type="number" id="buscar-id" placeholder="ID usuário">
@@ -39,6 +40,9 @@
         </div>
     </div>
 
-    <script src="chat.js"></script> 
+    <script>
+        const meu_id = "<?php echo isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : ''; ?>";
+    </script>
+    <script src="chat.js"></script>
 </body>
 </html>

@@ -25,3 +25,5 @@ function toggleCategoria() {
         document.getElementsByName('genero3')[0].value = ''; // Limpa seleção
     }
 }
+
+toggleCategoria(); // Chama a função ao carregar a página para ajustar os campos conforme a categoria selecionada (ou não)
